@@ -54,7 +54,19 @@ Registro completo em [docs/decisoes.md](docs/decisoes.md) (D08 a D13).
 
 ## 5. Métricas do dashboard
 
-KM total, volume por categoria, ranking de utilização, cronograma de manutenções e projeção financeira do mês. Detalhes por arquivo `.sql` virão com a implementação do dashboard.
+Cada métrica é uma consulta SQL nativa comentada em `backend/src/main/resources/sql/dashboard/`, executada pelo `DashboardRepository` com `JdbcClient` (sem JPQL e sem cálculo em Java do que o SQL resolve). Só viagens **realizadas** entram nas de viagem.
+
+| Métrica | Arquivo | O que calcula |
+|---|---|---|
+| KM total | `total_km.sql` | soma de `km_percorrida` das viagens realizadas, de um veículo (`veiculoId`) ou da frota |
+| Volume por categoria | `volume_categoria.sql` | contagem de viagens realizadas por tipo; LEVE e PESADO sempre aparecem, mesmo com zero |
+| Ranking de utilização | `ranking_utilizacao.sql` | top 5 veículos pela soma de km (desempate por id); a posição 1 é o destaque |
+| Cronograma | `cronograma.sql` | 5 primeiras manutenções PENDENTE ou EM_REALIZACAO a partir de `dataInicial` (padrão: hoje), por data de início, com placa e modelo |
+| Projeção financeira | `projecao_financeira.sql` | soma de `custo_estimado` das manutenções do mês atual, exceto REJEITADA, com total e quebra por status (`rollup`) |
+
+**CTE ou VIEW?** A regra de viagem realizada é uma CTE (`viagens_com_chegada` → `viagens_realizadas`), repetida de forma idêntica nas três consultas de viagem. Optei pela CTE em vez de uma VIEW para manter a regra legível dentro de cada arquivo `.sql` e não acrescentar uma migração só para isso; o custo é a repetição de cerca de 12 linhas. As consultas usam os índices `ix_viagens_veiculo_saida` (partição e ordenação do `lead`) e `ix_manutencoes_data_inicio`.
+
+Endpoints: `GET /api/dashboard/total-km`, `/volume-categoria`, `/ranking-utilizacao`, `/cronograma`, `/projecao-financeira` e `/resumo` (as cinco de uma vez).
 
 ## 6. API
 
@@ -66,6 +78,7 @@ Swagger: http://localhost:8080/swagger-ui.html. Recursos de CRUD seguem o mesmo 
 | `/api/viagens` | resposta traz `chegadaEfetiva` e `emAndamento`; `GET /api/viagens/cidades` lista origens e destinos já usados; conflito de agenda responde 409 |
 | `POST /api/auth/login` | público; corpo `{email, senha}`; devolve `{token, expiraEm, id, nome, perfil}` |
 | `/api/usuarios` | só ADMIN; `senha` obrigatória na criação e opcional na edição; a resposta nunca traz a senha |
+| `GET /api/dashboard/...` | `total-km?veiculoId=`, `volume-categoria`, `ranking-utilizacao`, `cronograma?dataInicial=AAAA-MM-DD`, `projecao-financeira`, `resumo` |
 | `/api/manutencoes` | `status` opcional (padrão `PENDENTE`); resposta traz o veículo resumido |
 
 Erros: `ProblemDetail`; no 400 o campo `erros` mapeia campo → mensagem. Regras entre campos (ex.: finalização ≥ início) aparecem com chave `<campo>Valida`.
