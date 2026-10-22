@@ -13,11 +13,18 @@ cd backend && mvn verify         # testes com Testcontainers (precisa de Docker)
 cd backend && mvn spring-boot:run   # API em http://localhost:8080 (Flyway migra e carrega o seed)
 ```
 
-O Swagger fica em http://localhost:8080/swagger-ui.html. O restante (compose completo com `api` e `web`) é descrito ao fim do projeto.
+```bash
+cd frontend && npm ci && npm run dev   # http://localhost:5173, com proxy de /api para localhost:8080
+cd frontend && npm run build && npm run lint
+```
+
+O Swagger fica em http://localhost:8080/swagger-ui.html. Entre com `admin@logitrack.com` / `admin123`. O restante (compose completo com `api` e `web`) é descrito ao fim do projeto.
 
 ## 2. Decisões técnicas e arquitetura
 
 Stack: Java 21 + Spring Boot 3 + PostgreSQL 16 + Flyway no back; React + TypeScript + Vite + Mantine no front; Docker Compose para subir tudo. O registro completo das decisões está em [docs/decisoes.md](docs/decisoes.md).
+
+**Front:** SPA em React 18 + TypeScript + Vite. Mantine para a UI, TanStack Query + axios para dados, React Hook Form + Zod nos formulários e Recharts nos gráficos. O `axios` usa `baseURL=/api` e injeta o token; um 401 limpa a sessão e leva ao login. A sessão (token, nome, perfil) fica em memória e no `localStorage`, e o `ProtectedRoute` manda para `/login` quando não há sessão. Em dev o Vite faz proxy de `/api`, como o nginx em produção.
 
 **Camadas (back):** controller → service → repository, pacotes por feature em `br.com.logitrack`. DTOs são `record`s e a entidade nunca sai do controller.
 
