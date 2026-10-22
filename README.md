@@ -19,6 +19,10 @@ O Swagger fica em http://localhost:8080/swagger-ui.html. O restante (compose com
 
 Stack: Java 21 + Spring Boot 3 + PostgreSQL 16 + Flyway no back; React + TypeScript + Vite + Mantine no front; Docker Compose para subir tudo. O registro completo das decisões está em [docs/decisoes.md](docs/decisoes.md).
 
+**Camadas (back):** controller → service → repository, pacotes por feature em `br.com.logitrack`. DTOs são `record`s e a entidade nunca sai do controller.
+
+**CRUD genérico** (`shared/crud`): `CrudService<E, Req, Res>` (transações, 404, ganchos `validar` e `antesDeExcluir`), `CrudController<Req, Res>` (GET paginado, GET por id, POST 201, PUT, DELETE 204) e `CrudMapper` (mapeamento manual). Uma feature sem regra extra são só entidade, request/response, mapper, repository e duas classes de poucas linhas. Erros saem como `ProblemDetail` (RFC 7807) via `GlobalExceptionHandler`: 400 com erros por campo, 404, 409 para `NegocioException` e violação de integridade.
+
 ## 3. Mudanças no banco
 
 O script original do desafio está em [scripts/](scripts/) e é preservado. As migrações Flyway (`backend/src/main/resources/db/migration/`) são **derivadas** dele; o Flyway não aponta para `scripts/`.
