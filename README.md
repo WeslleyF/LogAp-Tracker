@@ -48,7 +48,14 @@ KM total, volume por categoria, ranking de utilização, cronograma de manutenç
 
 ## 6. API
 
-Documentação Swagger será exposta em `/swagger-ui.html` quando a API existir.
+Swagger: http://localhost:8080/swagger-ui.html. Recursos de CRUD seguem o mesmo contrato (`GET` paginado com `page`, `size`, `sort`; `GET /{id}`; `POST` 201; `PUT /{id}`; `DELETE /{id}` 204):
+
+| Recurso | Observações |
+|---|---|
+| `/api/veiculos` | placa `ABC-1234` ou Mercosul, tipo `LEVE`/`PESADO`, ano 1980..ano atual+1 |
+| `/api/manutencoes` | `status` opcional (padrão `PENDENTE`); resposta traz o veículo resumido |
+
+Erros: `ProblemDetail`; no 400 o campo `erros` mapeia campo → mensagem. Regras entre campos (ex.: finalização ≥ início) aparecem com chave `<campo>Valida`.
 
 ## 7. Demonstração
 
