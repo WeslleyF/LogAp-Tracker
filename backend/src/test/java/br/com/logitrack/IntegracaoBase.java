@@ -3,14 +3,17 @@ package br.com.logitrack;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 /**
  * Postgres real, único para toda a execução (o cache de contexto do Spring reaproveita a conexão),
- * com as migrações Flyway aplicadas. Testes que alteram dados usam {@code @Transactional}.
+ * com as migrações Flyway aplicadas. Os testes rodam como ADMIN; os de autenticação usam
+ * {@code @WithAnonymousUser} e tokens reais. Testes que alteram dados usam {@code @Transactional}.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
+@WithMockUser(roles = "ADMIN")
 public abstract class IntegracaoBase {
 
   @ServiceConnection

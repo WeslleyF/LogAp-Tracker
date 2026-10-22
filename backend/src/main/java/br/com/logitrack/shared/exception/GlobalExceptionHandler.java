@@ -8,6 +8,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -53,6 +55,16 @@ public class GlobalExceptionHandler {
     return problema(
         HttpStatus.CONFLICT,
         "Operação viola uma restrição de dados (registro duplicado ou em uso)");
+  }
+
+  @ExceptionHandler(AuthenticationException.class)
+  ProblemDetail naoAutenticado(AuthenticationException ex) {
+    return problema(HttpStatus.UNAUTHORIZED, ex.getMessage());
+  }
+
+  @ExceptionHandler(AccessDeniedException.class)
+  ProblemDetail acessoNegado(AccessDeniedException ex) {
+    return problema(HttpStatus.FORBIDDEN, "Seu perfil não tem acesso a este recurso");
   }
 
   @ExceptionHandler(Exception.class)

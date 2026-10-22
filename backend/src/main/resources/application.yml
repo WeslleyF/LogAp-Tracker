@@ -19,3 +19,11 @@ spring:
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
+
+logitrack:
+  jwt:
+    # Em produção, JWT_SECRET vem do .env (mínimo 32 caracteres). O padrão serve só para desenvolvimento local.
+    secret: ${JWT_SECRET:desenvolvimento-local-segredo-com-mais-de-32-caracteres}
+    expiracao: 8h
+  cors:
+    origens: ${CORS_ORIGENS:http://localhost:5173,http://localhost:3000}

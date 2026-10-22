@@ -21,6 +21,8 @@ Stack: Java 21 + Spring Boot 3 + PostgreSQL 16 + Flyway no back; React + TypeScr
 
 **Camadas (back):** controller → service → repository, pacotes por feature em `br.com.logitrack`. DTOs são `record`s e a entidade nunca sai do controller.
 
+**Segurança:** Spring Security stateless com OAuth2 Resource Server. `POST /api/auth/login` confere e-mail e senha (BCrypt) e devolve um JWT HS256 de 8 h com id, nome e perfil. Todo `/api/**` exige `Authorization: Bearer <token>`, exceto login e Swagger. `/api/usuarios/**` é só ADMIN; ADMIN e OPERADOR usam o resto. 401 e 403 saem como `ProblemDetail`. O segredo vem de `JWT_SECRET` (mínimo 32 caracteres); sem a variável, vale um padrão que serve só para desenvolvimento local. Usuário inativo não loga, mas um token já emitido vale até expirar.
+
 **CRUD genérico** (`shared/crud`): `CrudService<E, Req, Res>` (transações, 404, ganchos `validar` e `antesDeExcluir`), `CrudController<Req, Res>` (GET paginado, GET por id, POST 201, PUT, DELETE 204) e `CrudMapper` (mapeamento manual). Uma feature sem regra extra são só entidade, request/response, mapper, repository e duas classes de poucas linhas. Erros saem como `ProblemDetail` (RFC 7807) via `GlobalExceptionHandler`: 400 com erros por campo, 404, 409 para `NegocioException` e violação de integridade.
 
 ## 3. Mudanças no banco
@@ -62,6 +64,8 @@ Swagger: http://localhost:8080/swagger-ui.html. Recursos de CRUD seguem o mesmo 
 |---|---|
 | `/api/veiculos` | placa `ABC-1234` ou Mercosul, tipo `LEVE`/`PESADO`, ano 1980..ano atual+1 |
 | `/api/viagens` | resposta traz `chegadaEfetiva` e `emAndamento`; `GET /api/viagens/cidades` lista origens e destinos já usados; conflito de agenda responde 409 |
+| `POST /api/auth/login` | público; corpo `{email, senha}`; devolve `{token, expiraEm, id, nome, perfil}` |
+| `/api/usuarios` | só ADMIN; `senha` obrigatória na criação e opcional na edição; a resposta nunca traz a senha |
 | `/api/manutencoes` | `status` opcional (padrão `PENDENTE`); resposta traz o veículo resumido |
 
 Erros: `ProblemDetail`; no 400 o campo `erros` mapeia campo → mensagem. Regras entre campos (ex.: finalização ≥ início) aparecem com chave `<campo>Valida`.
