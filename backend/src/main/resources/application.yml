@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: logitrack-api
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:logitrack}
+    username: ${DB_USER:logitrack}
+    password: ${DB_PASSWORD:logitrack}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
+  jackson:
+    time-zone: America/Sao_Paulo
+    deserialization:
+      fail-on-unknown-properties: false
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
