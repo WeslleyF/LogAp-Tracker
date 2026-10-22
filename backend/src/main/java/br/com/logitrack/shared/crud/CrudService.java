@@ -34,14 +34,14 @@ public abstract class CrudService<E extends BaseEntity, Req, Res> {
   public Res criar(Req request) {
     E entidade = mapper.toEntity(request);
     validar(entidade);
-    return mapper.toResponse(repository.saveAndFlush(entidade));
+    return salvar(entidade);
   }
 
   public Res atualizar(Integer id, Req request) {
     E entidade = buscarEntidade(id);
     mapper.update(entidade, request);
     validar(entidade);
-    return mapper.toResponse(repository.saveAndFlush(entidade));
+    return salvar(entidade);
   }
 
   public void excluir(Integer id) {
@@ -51,11 +51,20 @@ public abstract class CrudService<E extends BaseEntity, Req, Res> {
     repository.flush();
   }
 
+  /** Gancho executado após gravar (ex.: reler colunas calculadas pelo banco). */
+  protected void aposSalvar(E entidade) {}
+
   /** Gancho para regras de negócio ao criar ou atualizar; lança {@code NegocioException}. */
   protected void validar(E entidade) {}
 
   /** Gancho para regras de negócio antes de excluir; lança {@code NegocioException}. */
   protected void antesDeExcluir(E entidade) {}
+
+  private Res salvar(E entidade) {
+    E salva = repository.saveAndFlush(entidade);
+    aposSalvar(salva);
+    return mapper.toResponse(salva);
+  }
 
   protected E buscarEntidade(Integer id) {
     return repository.findById(id).orElseThrow(() -> new NaoEncontradoException(id));

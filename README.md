@@ -40,7 +40,15 @@ Usuários de teste: `admin@logitrack.com` / `admin123` (ADMIN) e `operador@logit
 
 ## 4. Regras de negócio
 
-Ver [docs/decisoes.md](docs/decisoes.md) (D08 a D13): chegada efetiva, viagem realizada, conflito de agenda e REJEITADA fora da projeção.
+Registro completo em [docs/decisoes.md](docs/decisoes.md) (D08 a D13).
+
+- **Chegada efetiva:** `data_chegada`; se nula, a `data_saida` da próxima viagem do mesmo veículo (`lead`). Sem nenhuma das duas, a viagem está **em andamento**. Na API, é calculada pelo banco (`@Formula` na entidade `Viagem`, sem N+1).
+- **Viagem realizada:** tem chegada efetiva; só ela entra nas métricas. Fechada pela próxima e sem km conta no volume e soma zero km.
+- **Conflito de agenda (409)**, verificado em SQL pelo `ViagemValidator`, nos arquivos `backend/src/main/resources/sql/viagem/`:
+  - `conflito_viagem.sql`: inclui a viagem nova ou editada nas viagens do veículo, recalcula a chegada efetiva com `lead` e testa a sobreposição dos intervalos `[saída, chegada efetiva)`; mesma saída também conflita. Uma viagem aberta é encerrada pela próxima saída, então só bloqueia quem sai antes dela e termina depois da saída dela.
+  - `conflito_manutencao.sql`: a viagem não pode se sobrepor a manutenção não REJEITADA do mesmo veículo (do início do dia de `data_inicio` ao fim do dia de `coalesce(data_finalizacao, data_inicio)`); viagem em andamento ocupa só o dia da saída.
+  - A mensagem do erro diz com o que conflitou (placa, rota e datas).
+- **REJEITADA** não bloqueia viagem e fica fora da projeção financeira.
 
 ## 5. Métricas do dashboard
 
@@ -53,6 +61,7 @@ Swagger: http://localhost:8080/swagger-ui.html. Recursos de CRUD seguem o mesmo 
 | Recurso | Observações |
 |---|---|
 | `/api/veiculos` | placa `ABC-1234` ou Mercosul, tipo `LEVE`/`PESADO`, ano 1980..ano atual+1 |
+| `/api/viagens` | resposta traz `chegadaEfetiva` e `emAndamento`; `GET /api/viagens/cidades` lista origens e destinos já usados; conflito de agenda responde 409 |
 | `/api/manutencoes` | `status` opcional (padrão `PENDENTE`); resposta traz o veículo resumido |
 
 Erros: `ProblemDetail`; no 400 o campo `erros` mapeia campo → mensagem. Regras entre campos (ex.: finalização ≥ início) aparecem com chave `<campo>Valida`.
