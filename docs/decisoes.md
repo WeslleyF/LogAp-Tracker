@@ -1,6 +1,6 @@
 # Registro de decisões
 
-Memória do projeto entre sessões. Regras: decisões são do dono do projeto e não se contrariam sem perguntar; nunca se apaga uma (se substituída, marcar "Substituída por Dxx"); decisão nova entra no mesmo commit em que é aplicada; `assumida` = tomada pelo agente, para revisão.
+Memória do projeto entre sessões. Regras: decisões registradas valem até serem substituídas e não se contrariam sem confirmar; nunca se apaga uma (se substituída, marcar "Substituída por Dxx"); decisão nova entra no mesmo commit em que é aplicada; `assumida` = tomada sem definição prévia, para revisão.
 
 Formato: **ID** · data · origem · status. Decisão. *Motivo.*
 
@@ -41,7 +41,7 @@ Formato: **ID** · data · origem · status. Decisão. *Motivo.*
 - **D27** · 22/10/2026 · prompt · `assumida`. Validações de formato: placa antiga ou Mercosul, ano 1980..ano atual+1, origem ≠ destino. Km opcional (> 0 quando informada).
 - **D28** · 22/10/2026 · prompt · `assumida`. Nada de push sem pedido explícito.
 
-## Decisões do agente durante a implementação
+## Decisões tomadas durante a implementação
 
 - **D29** · 22/10/2026 · fundação · `assumida`. Ambiente de desenvolvimento sem JDK/Node: build e testes rodam em containers Docker (`maven:3-eclipse-temurin-21`, `node:20`), e o `AGENTS.md` documenta os comandos diretos. *Só o Docker estava disponível.*
 - **D30** · 22/10/2026 · backend base · `assumida`. Spring Boot 3.4.5, springdoc 2.8.6, Spotless 2.44.4 com Google Java Format 1.25.2, vinculado ao `verify` (`spotless:check`); `mvn spotless:apply` formata. *Versões estáveis e compatíveis entre si.*

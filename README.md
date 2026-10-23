@@ -118,5 +118,5 @@ Erros: `ProblemDetail`; no 400 o campo `erros` mapeia campo → mensagem. Regras
 
 ## 7. Demonstração
 
-Prints esperados em `docs/prints/` (serão adicionados pelo dono do projeto):
+Prints esperados em `docs/prints/` (a adicionar):
 - `login.png`, `dashboard.png`, `viagens-lista.png`, `viagem-conflito.png`, `veiculos.png`, `manutencoes.png`, `usuarios.png`.
