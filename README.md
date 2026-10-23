@@ -2,16 +2,32 @@
 
 MVP do desafio técnico da LogAp: gestão de frota com **CRUD de Viagens**, cadastros de apoio (veículos, manutenções, usuários) e **dashboard com 5 métricas calculadas via SQL**.
 
-## Acesso rápido
+## Como rodar (passo a passo)
 
-Depois de subir com `docker compose up --build`, abra **http://localhost:3000** e entre com:
+Pré-requisito: Docker com Compose. Não precisa de Java nem Node.
+
+1. Clone o repositório e entre na pasta:
+   ```bash
+   git clone https://github.com/WeslleyF/LogAp-Tracker.git
+   cd LogAp-Tracker
+   ```
+2. Crie o arquivo de ambiente (o `JWT_SECRET` do exemplo já serve para testar):
+   ```bash
+   cp .env.example .env
+   ```
+3. Suba tudo (banco, API e front). Na primeira vez leva alguns minutos por causa do build:
+   ```bash
+   docker compose up --build
+   ```
+4. Espere a API iniciar (linha `Started LogiTrackApplication` no log). O banco já vem com dados de exemplo.
+5. Abra **http://localhost:3000** e entre com uma das credenciais abaixo.
 
 | Perfil | E-mail | Senha | Acesso |
 |---|---|---|---|
 | ADMIN | `admin@logitrack.com` | `admin123` | tudo, inclusive o menu Usuários |
 | OPERADOR | `operador@logitrack.com` | `operador123` | tudo, menos Usuários |
 
-Swagger da API: http://localhost:8080/swagger-ui.html (faça o login em `POST /api/auth/login` e use **Authorize** com o token).
+Swagger da API: http://localhost:8080/swagger-ui.html (faça o login em `POST /api/auth/login` e use **Authorize** com o token). Para parar: `docker compose down`; para recomeçar com o banco limpo: `docker compose down -v`. Rodar sem Docker e rodar os testes: seção 1 abaixo.
 
 ## 1. Como rodar
 
