@@ -1,9 +1,3 @@
-# Registro de decisões
-
-Memória do projeto entre sessões. Regras: decisões registradas valem até serem substituídas e não se contrariam sem confirmar; nunca se apaga uma (se substituída, marcar "Substituída por Dxx"); decisão nova entra no mesmo commit em que é aplicada; `assumida` = tomada sem definição prévia, para revisão.
-
-Formato: **ID** · data · origem · status. Decisão. *Motivo.*
-
 ## Modelagem
 
 - **D01** · 22/10/2026 · modelagem. Implementar o Módulo 1 (Viagens) completo. Veículos e manutenções têm CRUD de apoio (manutenção básico, sem regras do módulo 2). *O dashboard depende desses dados.*
