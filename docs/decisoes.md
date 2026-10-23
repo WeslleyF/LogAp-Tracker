@@ -43,7 +43,7 @@ Formato: **ID** · data · origem · status. Decisão. *Motivo.*
 
 ## Decisões tomadas durante a implementação
 
-- **D29** · 22/10/2026 · fundação · `assumida`. Ambiente de desenvolvimento sem JDK/Node: build e testes rodam em containers Docker (`maven:3-eclipse-temurin-21`, `node:20`), e o `AGENTS.md` documenta os comandos diretos. *Só o Docker estava disponível.*
+- **D29** · 22/10/2026 · fundação · `assumida`. Ambiente de desenvolvimento sem JDK/Node: build e testes rodam em containers Docker (`maven:3-eclipse-temurin-21`, `node:20`), e o README traz os comandos diretos. *Só o Docker estava disponível.*
 - **D30** · 22/10/2026 · backend base · `assumida`. Spring Boot 3.4.5, springdoc 2.8.6, Spotless 2.44.4 com Google Java Format 1.25.2, vinculado ao `verify` (`spotless:check`); `mvn spotless:apply` formata. *Versões estáveis e compatíveis entre si.*
 - **D31** · 22/10/2026 · backend base · `assumida`. Operador de teste: `operador@logitrack.com` / `operador123`. Complementa D25.
 - **D32** · 22/10/2026 · backend base · `assumida`. `BaseEntity` usa `Integer id` (colunas `serial` do script original são `integer`; com `Long` o `ddl-auto=validate` falharia). Em V2 não se tornou `status` NOT NULL; a obrigatoriedade fica na validação do request.
