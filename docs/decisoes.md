@@ -1,6 +1,6 @@
 # Decisões do projeto
 
-Registro das decisões de modelagem, arquitetura e implementação do LogiTrack Pro, todas tomadas em 22/10/2026. Uma decisão não se apaga: se for substituída, marca-se "Substituída por Dxx" e cria-se a nova.
+Registro das decisões de modelagem, arquitetura e implementação do LogiTrack Pro, todas tomadas em 22/10/2026.
 
 ## Modelagem
 
@@ -40,7 +40,7 @@ Registro das decisões de modelagem, arquitetura e implementação do LogiTrack 
 
 ## Implementação
 
-- **D25, D31** Usuários de teste: `admin@logitrack.com` / `admin123` e `operador@logitrack.com` / `operador123`.
+- **D25, D31** Há dois usuários de teste, um ADMIN e um OPERADOR; as credenciais estão no README.
 - **D29** Build e testes podem rodar em containers Docker quando a máquina não tem JDK ou Node. O README traz também os comandos diretos.
 - **D30** Spring Boot 3.4.5, springdoc 2.8.6 e Spotless com Google Java Format, executado no `verify`.
 - **D32** `BaseEntity` usa `Integer id`, porque as colunas `serial` do script original são `integer` e o `ddl-auto=validate` falharia com `Long`.
