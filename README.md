@@ -19,7 +19,14 @@ docker compose up --build   # sobe db, api e web; o Flyway migra e carrega o see
 | API / Swagger | http://localhost:8080/swagger-ui.html |
 | Postgres | localhost:5432 (`DB_*` do `.env`) |
 
-Usuários de teste: `admin@logitrack.com` / `admin123` (ADMIN) e `operador@logitrack.com` / `operador123` (OPERADOR). O `web` serve a SPA com nginx e faz proxy de `/api` para a `api` (sem CORS). Para recomeçar do zero, `docker compose down -v` apaga o volume do banco.
+**Credenciais de acesso**
+
+| Perfil | E-mail | Senha | Acesso |
+|---|---|---|---|
+| ADMIN | `admin@logitrack.com` | `admin123` | tudo, inclusive o menu Usuários |
+| OPERADOR | `operador@logitrack.com` | `operador123` | tudo, menos Usuários |
+
+O banco local usa usuário, senha e nome `logitrack` (valores do `.env`). O `web` serve a SPA com nginx e faz proxy de `/api` para a `api` (sem CORS). Para recomeçar do zero, `docker compose down -v` apaga o volume do banco.
 
 ### Localmente, sem Docker
 
@@ -118,5 +125,5 @@ Erros: `ProblemDetail`; no 400 o campo `erros` mapeia campo → mensagem. Regras
 
 ## 7. Demonstração
 
-Prints esperados em `docs/prints/` (a adicionar):
+Prints esperados em `docs/prints/` :
 - `login.png`, `dashboard.png`, `viagens-lista.png`, `viagem-conflito.png`, `veiculos.png`, `manutencoes.png`, `usuarios.png`.
