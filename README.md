@@ -4,21 +4,41 @@ MVP do desafio técnico da LogAp: gestão de frota com **CRUD de Viagens**, cada
 
 ## 1. Como rodar
 
-Estado atual: banco e esqueleto da API. Pré-requisito: Docker.
+### Com Docker (recomendado)
+
+Pré-requisito: Docker com Compose.
+
+```bash
+cp .env.example .env        # ajuste JWT_SECRET (mínimo 32 caracteres) se quiser
+docker compose up --build   # sobe db, api e web; o Flyway migra e carrega o seed
+```
+
+| O quê | URL |
+|---|---|
+| Aplicação (SPA) | http://localhost:3000 |
+| API / Swagger | http://localhost:8080/swagger-ui.html |
+| Postgres | localhost:5432 (`DB_*` do `.env`) |
+
+Usuários de teste: `admin@logitrack.com` / `admin123` (ADMIN) e `operador@logitrack.com` / `operador123` (OPERADOR). O `web` serve a SPA com nginx e faz proxy de `/api` para a `api` (sem CORS). Para recomeçar do zero, `docker compose down -v` apaga o volume do banco.
+
+### Localmente, sem Docker
+
+Pré-requisitos: JDK 21, Maven 3.9, Node 20 e um Postgres 16 (`docker compose up -d db` serve).
 
 ```bash
 cp .env.example .env
-docker compose up -d db          # Postgres 16 em localhost:5432
-cd backend && mvn verify         # testes com Testcontainers (precisa de Docker)
-cd backend && mvn spring-boot:run   # API em http://localhost:8080 (Flyway migra e carrega o seed)
+docker compose up -d db
+cd backend && mvn spring-boot:run   # API em http://localhost:8080
+cd frontend && npm ci && npm run dev   # http://localhost:5173, proxy de /api para :8080
 ```
+
+Testes e qualidade:
 
 ```bash
-cd frontend && npm ci && npm run dev   # http://localhost:5173, com proxy de /api para localhost:8080
-cd frontend && npm run build && npm run lint
+cd backend && mvn verify            # testes (Testcontainers, precisa de Docker) + Spotless
+cd backend && mvn spotless:apply    # formata o Java
+cd frontend && npm run lint && npm run build
 ```
-
-O Swagger fica em http://localhost:8080/swagger-ui.html. Entre com `admin@logitrack.com` / `admin123`. O restante (compose completo com `api` e `web`) é descrito ao fim do projeto.
 
 ## 2. Decisões técnicas e arquitetura
 
@@ -46,6 +66,8 @@ O script original do desafio está em [scripts/](scripts/) e é preservado. As m
 | `V2__restricoes_e_indices.sql` | `veiculos.tipo` NOT NULL; `viagens.veiculo_id` NOT NULL; CHECK chegada > saída e km > 0; índice `viagens (veiculo_id, data_saida)`; `manutencoes.veiculo_id` e `custo_estimado` NOT NULL; CHECK custo ≥ 0, finalização ≥ início e status (`PENDENTE`, `EM_REALIZACAO`, `CONCLUIDA`, `REJEITADA`); índice `manutencoes (data_inicio)` | veículo sem tipo sumiria do volume por categoria; dados inconsistentes não entram; índices servem às somas por veículo, ao `LEAD` e aos filtros de data do cronograma e da projeção |
 | `V3__usuarios.sql` | tabela `usuarios` (email único, perfil `ADMIN`/`OPERADOR`, `ativo`) | haverá login |
 | `V4__seed.sql` | INSERTs originais (sem alteração) + viagens e manutenções com datas relativas a `current_date` + usuário admin e operador (hash BCrypt) | o dashboard sempre tem dados no mês atual e manutenções futuras, com todos os status e uma viagem em andamento; o seed relativo respeita as regras de conflito |
+
+Schema consolidado após todas as migrações: [docs/schema-final.sql](docs/schema-final.sql).
 
 **Mantido de propósito:** origem, destino e `tipo_servico` seguem texto livre (a tela sugere valores já usados); o `ON DELETE CASCADE` permanece (excluir veículo apaga viagens e manutenções, e a tela avisa); não há coluna `ativo` em veículos.
 

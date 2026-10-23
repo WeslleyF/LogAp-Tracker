@@ -17,5 +17,27 @@ services:
       timeout: 3s
       retries: 10
 
+  api:
+    build: ./backend
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-logitrack}
+      DB_USER: ${DB_USER:-logitrack}
+      DB_PASSWORD: ${DB_PASSWORD:-logitrack}
+      JWT_SECRET: ${JWT_SECRET:?defina JWT_SECRET no .env (mínimo 32 caracteres)}
+    ports:
+      - "${API_PORT:-8080}:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build: ./frontend
+    ports:
+      - "${WEB_PORT:-3000}:80"
+    depends_on:
+      - api
+
 volumes:
   db-data:
