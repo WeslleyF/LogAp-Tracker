@@ -2,6 +2,17 @@
 
 MVP do desafio técnico da LogAp: gestão de frota com **CRUD de Viagens**, cadastros de apoio (veículos, manutenções, usuários) e **dashboard com 5 métricas calculadas via SQL**.
 
+## Acesso rápido
+
+Depois de subir com `docker compose up --build`, abra **http://localhost:3000** e entre com:
+
+| Perfil | E-mail | Senha | Acesso |
+|---|---|---|---|
+| ADMIN | `admin@logitrack.com` | `admin123` | tudo, inclusive o menu Usuários |
+| OPERADOR | `operador@logitrack.com` | `operador123` | tudo, menos Usuários |
+
+Swagger da API: http://localhost:8080/swagger-ui.html (faça o login em `POST /api/auth/login` e use **Authorize** com o token).
+
 ## 1. Como rodar
 
 ### Com Docker (recomendado)
@@ -18,13 +29,6 @@ docker compose up --build   # sobe db, api e web; o Flyway migra e carrega o see
 | Aplicação (SPA) | http://localhost:3000 |
 | API / Swagger | http://localhost:8080/swagger-ui.html |
 | Postgres | localhost:5432 (`DB_*` do `.env`) |
-
-**Credenciais de acesso**
-
-| Perfil | E-mail | Senha | Acesso |
-|---|---|---|---|
-| ADMIN | `admin@logitrack.com` | `admin123` | tudo, inclusive o menu Usuários |
-| OPERADOR | `operador@logitrack.com` | `operador123` | tudo, menos Usuários |
 
 O banco local usa usuário, senha e nome `logitrack` (valores do `.env`). O `web` serve a SPA com nginx e faz proxy de `/api` para a `api` (sem CORS). Para recomeçar do zero, `docker compose down -v` apaga o volume do banco.
 
